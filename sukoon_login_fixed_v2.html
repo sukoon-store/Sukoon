@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سكون — لاصق الفم الطبي والسوار المنبه</title>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FAF7F2; --primary:#6B7F5E; --primary-light:#8FA382; --primary-dark:#4A5D3F; --secondary:#B8956A; --text:#1E1E1E; --sand:#E8DFD0; --sand-light:#F5EDE0; --muted-dark:#3D3D3D; --cream:var(--bg); --sage:var(--primary); --sage-light:var(--primary-light); --sage-dark:var(--primary-dark); --terra:var(--secondary); --char:var(--text); }
+  * { scroll-behavior:smooth; }
+  body { font-family:'Noto Sans Arabic',sans-serif; background:var(--cream); color:var(--char); overflow-x:hidden; }
+  [x-cloak] { display:none !important; }
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--cream); }
+  ::-webkit-scrollbar-thumb { background:var(--sage-light); border-radius:10px; }
+  @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-18px) rotate(2deg)} }
+  @keyframes float2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-14px) rotate(-2deg)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse-soft { 0%,100%{box-shadow:0 0 0 0 rgba(107,127,94,0.3)} 50%{box-shadow:0 0 0 12px rgba(107,127,94,0)} }
+  @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+  .af { animation:float 6s ease-in-out infinite; }
+  .af2 { animation:float2 7s ease-in-out infinite; }
+  .afu { animation:fadeUp 0.8s ease-out forwards; }
+  .glass { background:rgba(255,255,255,0.75); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border:1px solid rgba(255,255,255,0.3); }
+  .btn-p { background:linear-gradient(135deg,var(--sage) 0%,var(--sage-dark) 100%); color:white; padding:0.875rem 2.5rem; border-radius:9999px; font-weight:700; border:none; cursor:pointer; transition:all 0.4s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; box-shadow:0 4px 15px rgba(107,127,94,0.3); }
+  .btn-p::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); background-size:200% 100%; animation:shimmer 3s infinite; }
+  .btn-p:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 12px 35px rgba(107,127,94,0.4); }
+  .btn-wa { background:linear-gradient(135deg,#25D366 0%,#128C7E 100%); color:white; padding:1rem; border-radius:16px; font-weight:700; border:none; cursor:pointer; width:100%; transition:all 0.3s; box-shadow:0 4px 15px rgba(37,211,102,0.3); }
+  .btn-wa:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(37,211,102,0.4); }
+  .pc { background:white; border-radius:24px; overflow:hidden; transition:all 0.5s cubic-bezier(0.4,0,0.2,1); box-shadow:0 2px 10px rgba(0,0,0,0.04); position:relative; cursor:pointer; }
+  .pc::after { content:''; position:absolute; inset:0; border-radius:24px; border:2px solid transparent; transition:border-color 0.3s; pointer-events:none; }
+  .pc:hover { transform:translateY(-10px) scale(1.02); box-shadow:0 25px 50px rgba(0,0,0,0.1); }
+  .pc:hover::after { border-color:var(--sage-light); }
+  .pc .ci { height:200px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+  .pc .ci .em { font-size:4.5rem; transition:all 0.5s cubic-bezier(0.4,0,0.2,1); filter:drop-shadow(0 8px 16px rgba(0,0,0,0.1)); }
+  .pc:hover .ci .em { transform:scale(1.2) rotate(-5deg); }
+  .pc .co { position:absolute; inset:0; background:rgba(30,30,30,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:all 0.4s; backdrop-filter:blur(4px); }
+  .pc:hover .co { opacity:1; }
+  .cp { animation:pulse-soft 2s infinite; }
+  .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--char); color:white; padding:1rem 2.5rem; border-radius:9999px; z-index:500; font-weight:600; box-shadow:0 20px 40px rgba(0,0,0,0.2); }
+  .sd { height:1px; background:linear-gradient(90deg,transparent,var(--sand),transparent); margin:3rem auto; max-width:200px; }
+  .vc { background:white; border-radius:24px; padding:2.5rem 2rem; text-align:center; transition:all 0.4s; border:1px solid transparent; position:relative; overflow:hidden; }
+  .vc::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--sage),var(--terra)); transform:scaleX(0); transition:transform 0.4s; }
+  .vc:hover { transform:translateY(-5px); border-color:var(--sand); box-shadow:0 20px 40px rgba(0,0,0,0.06); }
+  .vc:hover::before { transform:scaleX(1); }
+  .oc { background:white; border-radius:20px; padding:1.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.04); transition:all 0.3s; border:1px solid transparent; }
+  .oc:hover { box-shadow:0 8px 30px rgba(0,0,0,0.08); border-color:var(--sand); }
+  .lpr { position:absolute; inset:-8px; border-radius:50%; border:3px solid var(--sage); opacity:0; transform:scale(0.8); transition:all 0.3s; pointer-events:none; }
+  .lpa .lpr { opacity:1; transform:scale(1.1); animation:pulse-soft 1s infinite; }
+  .ski { width:100%; padding:1rem 1.25rem; background:var(--bg); border:2px solid transparent; border-radius:16px; font-family:inherit; font-size:1rem; outline:none; transition:all 0.3s; }
+  .ski:focus { border-color:var(--primary); background:white; box-shadow:0 0 0 4px rgba(107,127,94,0.1); }
+  .ski::placeholder { color:#aaa; }
+  .product-photo{width:100%;height:100%;object-fit:cover;display:block}
+  .product-photo-contain{width:100%;height:100%;object-fit:contain;display:block;padding:18px}
+  .review-card{background:#fff;border:1px solid #eee;border-radius:22px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.04)}
+  .star-btn{font-size:28px;cursor:pointer;transition:transform .15s}.star-btn:hover{transform:scale(1.15)}
+  .image-preview{width:72px;height:72px;object-fit:cover;border-radius:14px;border:2px solid #eee}
+
+  @media(max-width:768px){ .pc .ci{height:160px} .pc .ci .em{font-size:3.5rem} }
+</style>
+</head>
+<body x-data="sukoonApp()" x-init="init()" :style="themeStyle">
+
+<!-- HEADER -->
+<header class="fixed top-4 left-4 right-4 z-50">
+  <div class="glass rounded-2xl px-6 py-3 flex justify-between items-center max-w-6xl mx-auto shadow-lg">
+    <div class="flex items-center gap-3 cursor-pointer select-none relative" 
+         @mousedown="startLongPress()" @mouseup="cancelLongPress()" @mouseleave="cancelLongPress()"
+         @touchstart.prevent="startLongPress()" @touchend="cancelLongPress()" @touchcancel="cancelLongPress()"
+         :class="{'lpa':longPressActive}" @click="!longPressTriggered && (view='home')">
+      <div class="lpr"></div>
+      <span class="text-2xl">🌙</span>
+      <span class="text-xl font-extrabold text-[var(--primary)] tracking-tight" x-text="settings.siteName"></span>
+    </div>
+    <nav class="hidden md:flex gap-1 bg-[var(--sand-light)]/50 rounded-full p-1">
+      <a @click="view='home'" :class="view==='home'?'bg-[var(--primary)] text-white shadow-md':'text-[var(--muted-dark)] hover:bg-white/60'" class="px-5 py-2 rounded-full cursor-pointer transition-all duration-300 font-semibold text-sm">الرئيسية</a>
+      <a @click="view='shop'" :class="view==='shop'?'bg-[var(--primary)] text-white shadow-md':'text-[var(--muted-dark)] hover:bg-white/60'" class="px-5 py-2 rounded-full cursor-pointer transition-all duration-300 font-semibold text-sm">المنتجات</a>
+      <a @click="view='about'" :class="view==='about'?'bg-[var(--primary)] text-white shadow-md':'text-[var(--muted-dark)] hover:bg-white/60'" class="px-5 py-2 rounded-full cursor-pointer transition-all duration-300 font-semibold text-sm">عنّا</a>
+    </nav>
+    <button @click="cartOpen=true" class="relative bg-[var(--sand-light)] hover:bg-[var(--sand)] w-11 h-11 rounded-full text-lg transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center">
+      🛒
+      <span x-show="cart.length>0" x-text="cart.length" class="absolute -top-1.5 -right-1.5 bg-[var(--secondary)] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold cp"></span>
+    </button>
+  </div>
+</header>
+
+<div class="h-24"></div>
+
+<!-- HOME / HERO -->
+<section x-show="view==='home'" x-transition.opacity.duration.600ms class="max-w-6xl mx-auto px-6 pt-8 pb-16">
+  <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[65vh]">
+    <div class="afu">
+      <div class="inline-flex items-center gap-2 bg-[var(--primary)]/10 text-[var(--primary)] px-4 py-2 rounded-full text-sm font-semibold mb-6">
+        <span>✨</span><span>منتجات طبية معتمدة</span>
+      </div>
+      <h1 class="text-5xl md:text-6xl font-extrabold text-[var(--text)] mb-6 leading-[1.15] whitespace-pre-line" x-text="settings.heroTitle"></h1>
+      <p class="text-gray-500 text-lg mb-8 leading-relaxed max-w-md" x-text="settings.heroSubtitle"></p>
+      <div class="flex gap-4 items-center">
+        <button @click="view='shop'" class="btn-p text-base">استكشف المنتجات</button>
+        <a @click="view='about'" class="text-[var(--primary)] font-semibold cursor-pointer hover:underline flex items-center gap-1">تعرّف علينا <span>←</span></a>
+      </div>
+      <div class="flex gap-6 mt-10 text-sm text-gray-400">
+        <div class="flex items-center gap-2"><span class="text-[var(--primary)] font-bold text-lg" x-text="settings.customerCount"></span><span>عميل سعيد</span></div>
+        <div class="flex items-center gap-2"><span class="text-[var(--primary)] font-bold text-lg" x-text="settings.ratingText"></span><span>⭐ تقييم</span></div>
+      </div>
+    </div>
+    <div class="relative h-96 hidden lg:block">
+      <div class="absolute top-8 right-16 bg-white rounded-3xl p-6 shadow-2xl af w-48 text-center">
+        <div class="w-16 h-16 bg-[#E8D5E0] rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">🩹</div>
+        <div class="font-bold text-[var(--text)]">لاصق فم طبي</div>
+        <div class="text-sm text-gray-400 mt-1">30 & 60 قطعة</div>
+      </div>
+      <div class="absolute top-36 left-8 bg-white rounded-3xl p-6 shadow-2xl af2 w-48 text-center">
+        <div class="w-16 h-16 bg-[#D0D8E0] rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">⌚</div>
+        <div class="font-bold text-[var(--text)]">سوار منبه ذكي</div>
+        <div class="text-sm text-gray-400 mt-1">3 موديلات</div>
+      </div>
+      <div class="absolute bottom-8 right-32 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] rounded-3xl p-5 shadow-2xl text-white w-40 text-center af" style="animation-delay:1s">
+        <div class="text-3xl font-extrabold">100%</div>
+        <div class="text-sm opacity-80 mt-1">مواد طبية آمنة</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS (Home) -->
+<section x-show="view==='home'" class="max-w-6xl mx-auto px-6 pb-16">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h2 class="text-2xl font-bold text-[var(--text)]">منتجاتنا المميزة</h2>
+      <p class="text-gray-400 mt-1">الأكثر مبيعاً هذا الشهر</p>
+    </div>
+    <button @click="view='shop'" class="text-[var(--primary)] font-semibold text-sm hover:underline">عرض الكل ←</button>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+    <template x-for="p in products.slice(0,4)" :key="p.id">
+      <div @click="openProduct(p)" class="pc group">
+        <div class="ci" :style="`background:${p.bg}`">
+          <template x-if="p.images && p.images.length"><img :src="p.images[0]" class="product-photo" :alt="p.name"></template><template x-if="!p.images || !p.images.length"><span class="em" x-text="p.emoji"></span></template>
+          <div class="co">
+            <button @click.stop="addToCart(p)" class="bg-white text-[var(--text)] px-5 py-2.5 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition">أضف للسلة</button>
+          </div>
+        </div>
+        <div class="p-4">
+          <span class="text-[11px] font-bold text-[var(--primary)] uppercase tracking-wider" x-text="p.tag"></span>
+          <h3 class="font-bold text-[15px] mt-1 mb-2 text-[var(--text)] leading-snug" x-text="p.name"></h3>
+          <div class="flex justify-between items-center">
+            <span class="text-[var(--secondary)] font-extrabold text-lg"><span x-text="p.price.toLocaleString('en')"></span> <span class="text-xs font-normal text-gray-400">IQD</span></span>
+            <div class="flex items-center gap-1 bg-[var(--sand-light)] px-2 py-1 rounded-lg"><span class="text-xs">⭐</span><span class="text-xs font-bold text-[var(--text)]" x-text="p.rate"></span></div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section x-show="view==='shop'" x-transition.opacity.duration.500ms class="max-w-6xl mx-auto px-6 py-8">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl font-extrabold text-[var(--text)] mb-2">متجر سكون</h2>
+    <p class="text-gray-400">اختر ما يناسبك من مجموعتنا المختارة بعناية</p>
+  </div>
+  <div class="flex flex-wrap justify-center gap-3 mb-10">
+    <button @click="cat='all'" :class="cat==='all'?'bg-[var(--primary)] text-white shadow-lg':'bg-white text-[var(--muted-dark)] hover:bg-[var(--sand-light)]'" class="border-2 border-transparent px-6 py-2.5 rounded-full font-bold transition-all duration-300">الكل</button>
+    <button @click="cat='tape'" :class="cat==='tape'?'bg-[var(--primary)] text-white shadow-lg':'bg-white text-[var(--muted-dark)] hover:bg-[var(--sand-light)]'" class="border-2 border-transparent px-6 py-2.5 rounded-full font-bold transition-all duration-300">🩹 لاصق الفم</button>
+    <button @click="cat='band'" :class="cat==='band'?'bg-[var(--primary)] text-white shadow-lg':'bg-white text-[var(--muted-dark)] hover:bg-[var(--sand-light)]'" class="border-2 border-transparent px-6 py-2.5 rounded-full font-bold transition-all duration-300">⌚ السوار الذكي</button>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+    <template x-for="p in filteredProducts" :key="p.id">
+      <div @click="openProduct(p)" class="pc group">
+        <div class="ci" :style="`background:${p.bg}`">
+          <template x-if="p.images && p.images.length"><img :src="p.images[0]" class="product-photo" :alt="p.name"></template><template x-if="!p.images || !p.images.length"><span class="em" x-text="p.emoji"></span></template>
+          <div class="co">
+            <button @click.stop="addToCart(p)" class="bg-white text-[var(--text)] px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition flex items-center gap-2"><span>🛒</span> أضف للسلة</button>
+          </div>
+        </div>
+        <div class="p-5">
+          <span class="text-[11px] font-bold text-[var(--primary)] uppercase tracking-wider" x-text="p.tag"></span>
+          <h3 class="font-bold text-base mt-1.5 mb-3 text-[var(--text)] leading-snug" x-text="p.name"></h3>
+          <p class="text-gray-400 text-sm mb-4 line-clamp-2" x-text="p.desc"></p>
+          <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+            <span class="text-[var(--secondary)] font-extrabold text-xl"><span x-text="p.price.toLocaleString('en')"></span> <span class="text-sm font-normal text-gray-400">IQD</span></span>
+            <div class="flex items-center gap-1.5 bg-[var(--sand-light)] px-3 py-1.5 rounded-xl"><span class="text-sm">⭐</span><span class="text-sm font-bold text-[var(--text)]" x-text="p.rate"></span></div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section x-show="(view==='home' || view==='shop') && settings.showReviews" x-cloak class="max-w-6xl mx-auto px-6 py-16">
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-2 bg-[var(--secondary)]/10 text-[var(--secondary)] px-4 py-2 rounded-full text-sm font-bold mb-4">⭐ تقييمات العملاء</div>
+    <h2 class="text-3xl font-extrabold text-[var(--text)]">ماذا يقول عملاؤنا؟</h2>
+    <p class="text-gray-400 mt-2">شاركنا تجربتك مع منتجات سكون</p>
+  </div>
+  <div class="grid md:grid-cols-3 gap-5 mb-8">
+    <template x-for="(r,i) in reviews" :key="i">
+      <div class="review-card">
+        <div class="flex justify-between items-center mb-3"><strong x-text="r.name"></strong><span class="text-sm text-gray-400" x-text="r.date"></span></div>
+        <div class="text-[var(--secondary)] mb-2" x-text="'★'.repeat(r.rating) + '☆'.repeat(5-r.rating)"></div>
+        <p class="text-gray-500 leading-relaxed" x-text="r.comment"></p>
+      </div>
+    </template>
+  </div>
+  <div x-show="settings.allowReviews" class="bg-white rounded-3xl p-6 shadow-sm max-w-2xl mx-auto">
+    <h3 class="font-extrabold text-lg mb-4">أضف تقييمك</h3>
+    <input x-model="reviewForm.name" placeholder="اسمك" class="ski mb-3">
+    <div class="flex items-center gap-1 mb-3">
+      <template x-for="n in 5" :key="n"><button type="button" class="star-btn" @click="reviewForm.rating=n" x-text="n<=reviewForm.rating?'★':'☆'" :aria-label="n+' نجوم'"></button></template>
+    </div>
+    <textarea x-model="reviewForm.comment" rows="3" placeholder="اكتب تجربتك..." class="ski resize-none mb-3"></textarea>
+    <button @click="submitReview()" class="btn-p w-full py-3">نشر التقييم</button>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section x-show="view==='about'" x-transition.opacity.duration.500ms class="max-w-4xl mx-auto px-6 py-16">
+  <div class="text-center mb-16">
+    <div class="w-20 h-20 bg-[var(--primary)]/10 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6">🌙</div>
+    <h2 class="text-4xl font-extrabold text-[var(--text)] mb-4">قصة سكون</h2>
+    <p class="text-gray-500 text-lg leading-loose max-w-2xl mx-auto" x-text="settings.aboutText"></p>
+  </div>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="vc">
+      <div class="w-16 h-16 bg-[#E8F5E9] rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">✅</div>
+      <h3 class="font-bold text-lg text-[var(--text)] mb-2">جودة عالية</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">مواد طبية معتمدة وآمنة على البشرة، مختبرة بمعايير دولية</p>
+    </div>
+    <div class="vc">
+      <div class="w-16 h-16 bg-[#FFF3E0] rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🚚</div>
+      <h3 class="font-bold text-lg text-[var(--text)] mb-2">توصيل سريع</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">نصلك أينما كنت في العراق خلال 24-48 ساعة فقط</p>
+    </div>
+    <div class="vc">
+      <div class="w-16 h-16 bg-[#E3F2FD] rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">💬</div>
+      <h3 class="font-bold text-lg text-[var(--text)] mb-2">طلب سهل</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">أرسل طلبك عبر الواتساب مباشرة، بدون تعقيدات</p>
+    </div>
+  </div>
+  <div class="sd"></div>
+  <div class="bg-white rounded-3xl p-8 md:p-12 text-center shadow-sm">
+    <h3 class="text-2xl font-bold text-[var(--text)] mb-4">📞 تواصل معنا</h3>
+    <p class="text-gray-500 mb-6">لأي استفسار أو طلب خاص، نحن هنا لمساعدتك</p>
+    <a href="https://wa.me/9647869975102" target="_blank" class="inline-flex items-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition shadow-lg">
+      <span>📱</span><span>0786 997 5102</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-[var(--text)] text-white mt-20">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="grid md:grid-cols-3 gap-12 mb-12">
+      <div>
+        <div class="flex items-center gap-2 text-2xl font-extrabold mb-4"><span>🌙</span><span class="text-[var(--primary-light)]">سكون</span></div>
+        <p class="text-gray-400 text-sm leading-relaxed">منتجات مصممة لتحسين جودة نومك. لاصق فم طبي وسوار منبه ذكي بأعلى معايير الجودة.</p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4 text-[var(--primary-light)]">روابط سريعة</h4>
+        <div class="space-y-3 text-sm text-gray-400">
+          <a @click="view='home'" class="block hover:text-white transition cursor-pointer">الرئيسية</a>
+          <a @click="view='shop'" class="block hover:text-white transition cursor-pointer">المتجر</a>
+          <a @click="view='about'" class="block hover:text-white transition cursor-pointer">عنّا</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4 text-[var(--primary-light)]">تواصل معنا</h4>
+        <div class="space-y-3 text-sm text-gray-400">
+          <div class="flex items-center gap-2">📱 0786 997 5102</div>
+          <div class="flex items-center gap-2">📍 العراق - بغداد</div>
+          <div class="flex items-center gap-2">🕐 السبت - الخميس | 9 ص - 6 م</div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-600 text-sm"><p>© 2026 سكون. جميع الحقوق محفوظة.</p></div>
+  </div>
+</footer>
+
+<!-- PRODUCT MODAL -->
+<div x-show="selectedProduct" x-cloak class="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" @click.self="selectedProduct=null">
+  <div x-show="selectedProduct" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative">
+    <button @click="selectedProduct=null" class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur w-10 h-10 rounded-full shadow-lg text-lg hover:scale-110 transition flex items-center justify-center">✕</button>
+    <div class="h-64 flex items-center justify-center relative" :style="`background:${selectedProduct?selectedProduct.bg:''}`">
+      <template x-if="selectedProduct && selectedProduct.images && selectedProduct.images.length"><img :src="selectedProduct.images[0]" class="product-photo-contain" :alt="selectedProduct.name"></template><template x-if="!selectedProduct || !selectedProduct.images || !selectedProduct.images.length"><span class="text-8xl drop-shadow-2xl" x-text="selectedProduct?selectedProduct.emoji:''"></span></template>
+    </div>
+    <div class="p-8">
+      <span class="inline-block text-xs font-bold text-[var(--primary)] bg-[var(--primary)]/10 px-3 py-1 rounded-full mb-3" x-text="selectedProduct?selectedProduct.tag:''"></span>
+      <h2 class="text-2xl font-extrabold text-[var(--text)] mb-3" x-text="selectedProduct?selectedProduct.name:''"></h2>
+      <p class="text-gray-500 leading-relaxed mb-6" x-text="selectedProduct?selectedProduct.desc:''"></p>
+      <div class="flex gap-6 text-sm text-gray-400 mb-6">
+        <span class="flex items-center gap-1.5">⭐ <span class="font-bold text-[var(--text)]" x-text="selectedProduct?selectedProduct.rate:''"></span></span>
+        <span class="flex items-center gap-1.5">📦 توصيل 1-2 يوم</span>
+        <span class="flex items-center gap-1.5">🔄 ضمان 14 يوم</span>
+      </div>
+      <div class="flex justify-between items-center border-t border-gray-100 pt-6 mb-6">
+        <span class="text-3xl font-extrabold text-[var(--secondary)]"><span x-text="selectedProduct?selectedProduct.price.toLocaleString('en'):''"></span> <small class="text-base font-normal text-gray-400">IQD</small></span>
+        <div class="flex items-center gap-3 bg-[var(--bg)] rounded-2xl px-2 py-1">
+          <button @click="modalQty>1?modalQty--:null" class="bg-white w-10 h-10 rounded-xl font-bold text-lg shadow-sm hover:shadow transition">−</button>
+          <span x-text="modalQty" class="font-bold text-lg w-6 text-center"></span>
+          <button @click="modalQty++" class="bg-white w-10 h-10 rounded-xl font-bold text-lg shadow-sm hover:shadow transition">+</button>
+        </div>
+      </div>
+      <button @click="addToCart(selectedProduct, modalQty); selectedProduct=null" class="btn-p w-full text-center block text-base py-4">
+        أضف للسلة — <span x-text="selectedProduct?(selectedProduct.price*modalQty).toLocaleString('en'):''"></span> IQD
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div x-show="cartOpen" x-cloak class="fixed inset-0 bg-black/50 z-[150] backdrop-blur-sm" @click.self="cartOpen=false" x-transition.opacity></div>
+<aside x-show="cartOpen" x-cloak x-transition:enter="transition transform duration-500" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" class="fixed top-0 right-0 w-full max-w-md h-screen bg-white z-[160] flex flex-col shadow-2xl">
+  <div class="flex justify-between items-center p-6 border-b border-gray-100">
+    <h3 class="font-extrabold text-lg flex items-center gap-2">🛒 <span>سلّة المشتريات</span></h3>
+    <button @click="cartOpen=false" class="w-10 h-10 rounded-full bg-[var(--bg)] hover:bg-[var(--sand)] transition flex items-center justify-center text-gray-400">✕</button>
+  </div>
+  <div class="flex-1 overflow-y-auto p-5" x-show="cart.length>0">
+    <template x-for="(item,i) in cart" :key="i">
+      <div class="flex items-center gap-4 bg-[var(--bg)] rounded-2xl p-4 mb-3 transition hover:bg-[var(--sand-light)]">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 shadow-sm" :style="`background:${item.product.bg}`" x-text="item.product.emoji"></div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm text-[var(--text)] truncate" x-text="item.product.name"></h4>
+          <span class="text-[var(--secondary)] font-bold text-sm" x-text="item.product.price.toLocaleString('en')+' IQD'"></span>
+        </div>
+        <div class="flex items-center gap-2 bg-white rounded-xl px-1 py-1 shadow-sm">
+          <button @click="updateQty(i,-1)" class="w-7 h-7 rounded-lg hover:bg-[var(--bg)] transition text-sm font-bold">−</button>
+          <span x-text="item.qty" class="text-sm font-bold w-4 text-center"></span>
+          <button @click="updateQty(i,1)" class="w-7 h-7 rounded-lg hover:bg-[var(--bg)] transition text-sm font-bold">+</button>
+        </div>
+        <button @click="removeItem(i)" class="text-gray-300 hover:text-red-500 transition text-lg p-1">🗑️</button>
+      </div>
+    </template>
+  </div>
+  <div x-show="cart.length===0" class="flex-1 flex flex-col items-center justify-center text-gray-300 p-8">
+    <div class="text-7xl mb-4 opacity-30">🛍️</div>
+    <p class="mb-6 text-lg">سلّتك فارغة</p>
+    <button @click="cartOpen=false; view='shop'" class="btn-p">تسوق الآن</button>
+  </div>
+  <div x-show="cart.length>0" class="p-6 border-t-2 border-gray-100 bg-[var(--bg)]">
+    <div class="flex justify-between items-center mb-5">
+      <span class="text-gray-500 font-medium">المجموع:</span>
+      <span class="text-2xl font-extrabold text-[var(--secondary)]"><span x-text="cartTotal.toLocaleString('en')"></span> <span class="text-base font-normal text-gray-400">IQD</span></span>
+    </div>
+    <button @click="openCheckout()" class="btn-p w-full text-center block text-base py-4 mb-3">متابعة الطلب</button>
+  </div>
+</aside>
+
+<!-- CHECKOUT / CUSTOMER INFO MODAL -->
+<div x-show="checkoutOpen" x-cloak class="fixed inset-0 bg-black/60 z-[250] flex items-center justify-center p-4 backdrop-blur-sm" @click.self="checkoutOpen=false">
+  <div x-show="checkoutOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-extrabold text-[var(--text)]">📝 معلومات الطلب</h2>
+        <button @click="checkoutOpen=false" class="w-9 h-9 rounded-full bg-[var(--bg)] hover:bg-[var(--sand)] transition flex items-center justify-center text-gray-400">✕</button>
+      </div>
+      <p class="text-gray-500 text-sm mb-6">يرجى إدخال معلوماتك لإتمام الطلب. سنتواصل معك عبر الواتساب لتأكيد التوصيل.</p>
+      <div class="space-y-4 mb-6">
+        <div>
+          <label class="block text-sm font-bold text-[var(--text)] mb-2">الاسم الكامل *</label>
+          <input x-ref="customerName" required autocomplete="name" x-model="customerInfo.name" type="text" placeholder="مثال: أحمد محمد" class="ski">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-[var(--text)] mb-2">رقم الهاتف *</label>
+          <input x-ref="customerPhone" required autocomplete="tel" x-model="customerInfo.phone" type="tel" placeholder="مثال: 0786 997 5102" class="ski" dir="ltr">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-[var(--text)] mb-2">العنوان الكامل *</label>
+          <textarea x-ref="customerAddress" required autocomplete="street-address" x-model="customerInfo.address" rows="3" placeholder="المحافظة - المنطقة - أقرب نقطة دالة" class="ski resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-[var(--text)] mb-2">ملاحظات (اختياري)</label>
+          <input x-model="customerInfo.notes" type="text" placeholder="أي تفاصيل إضافية..." class="ski">
+        </div>
+      </div>
+      <div class="bg-[var(--bg)] rounded-2xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm text-gray-500">عدد المنتجات:</span>
+          <span class="font-bold" x-text="cart.reduce((s,i)=>s+i.qty,0)+' منتج'"></span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-500">المجموع:</span>
+          <span class="text-xl font-extrabold text-[var(--secondary)]"><span x-text="cartTotal.toLocaleString('en')"></span> IQD</span>
+        </div>
+      </div>
+      <button @click="sendWhatsApp()" class="btn-wa text-lg flex items-center justify-center gap-2 py-4">
+        <span>📱</span><span>إرسال الطلب عبر واتساب</span>
+      </button>
+      <p class="text-center text-gray-400 text-xs mt-3">سيتم فتح واتساب تلقائياً مع تفاصيل طلبك</p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div x-show="isAdmin" x-cloak class="min-h-screen bg-[var(--bg)]">
+  <!-- Login -->
+  <div x-show="adminView==='login'" class="min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm text-center relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--primary)] via-[var(--secondary)] to-[var(--primary)]"></div>
+      <div class="text-3xl font-extrabold text-[var(--primary)] mb-2">🌙 سكون</div>
+      <h2 class="text-xl font-bold mb-8 text-[var(--text)]">لوحة التحكم</h2>
+      <input type="email" x-model="adminEmail" placeholder="البريد الإلكتروني" autocomplete="username" @keydown.enter="login()" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 text-center font-semibold outline-none focus:border-[var(--primary)] focus:bg-white transition">
+      <input type="password" x-model="adminPass" placeholder="كلمة المرور" autocomplete="current-password" @keydown.enter="login()" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-4 text-center font-semibold outline-none focus:border-[var(--primary)] focus:bg-white transition">
+      <button @click="login()" class="btn-p w-full py-4">دخول</button>
+      <p x-show="loginError" x-text="loginError" class="text-red-500 text-sm mt-4 font-medium"></p>
+      <a @click="isAdmin=false" class="block mt-8 text-[var(--primary)] cursor-pointer text-sm font-semibold hover:underline">← العودة للمتجر</a>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div x-show="adminView==='dashboard'">
+    <div class="bg-[var(--text)] text-white px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg">
+      <div class="font-extrabold text-lg flex items-center gap-2"><span>🌙</span><span>سكون — لوحة التحكم</span></div>
+      <div class="flex gap-2 bg-white/10 rounded-xl p-1">
+        <button @click="adminTab='products'" :class="adminTab==='products'?'bg-[var(--primary)] text-white':'text-gray-400 hover:text-white'" class="px-4 py-2 rounded-lg transition font-semibold text-sm">📦 المنتجات</button>
+        <button @click="adminTab='reviews'" :class="adminTab==='reviews'?'bg-[var(--primary)] text-white':'text-gray-400 hover:text-white'" class="px-4 py-2 rounded-lg transition font-semibold text-sm">⭐ التقييمات</button>
+        <button @click="adminTab='settings'" :class="adminTab==='settings'?'bg-[var(--primary)] text-white':'text-gray-400 hover:text-white'" class="px-4 py-2 rounded-lg transition font-semibold text-sm">🎨 الموقع</button>
+        <button @click="adminTab='orders'" :class="adminTab==='orders'?'bg-[var(--primary)] text-white':'text-gray-400 hover:text-white'" class="px-4 py-2 rounded-lg transition font-semibold text-sm">📋 الطلبات</button>
+        <button @click="logout()" class="text-gray-400 hover:text-white px-5 py-2 text-sm transition">خروج</button>
+      </div>
+    </div>
+    <div class="max-w-5xl mx-auto p-6">
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-white rounded-2xl p-5 shadow-sm"><div class="text-gray-400 text-sm mb-1">المنتجات</div><div class="text-2xl font-extrabold text-[var(--primary)]" x-text="products.length"></div></div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm"><div class="text-gray-400 text-sm mb-1">الطلبات</div><div class="text-2xl font-extrabold text-[var(--secondary)]" x-text="orders.length"></div></div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm"><div class="text-gray-400 text-sm mb-1">الطلبات الجديدة</div><div class="text-2xl font-extrabold text-blue-500" x-text="orders.filter(o=>o.status==='new').length"></div></div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm"><div class="text-gray-400 text-sm mb-1">التقييمات</div><div class="text-2xl font-extrabold text-[var(--secondary)]" x-text="reviews.length"></div></div>
+      </div>
+
+      <div x-show="adminTab==='products'">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-extrabold">إدارة المنتجات</h3>
+          <button @click="startAddProduct()" class="btn-p text-sm py-3 px-6">+ منتج جديد</button>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-[var(--bg)]">
+                <tr><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">#</th><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">المنتج</th><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">الفئة</th><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">السعر</th><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">التقييم</th><th class="p-4 text-right font-bold text-gray-500 text-xs uppercase tracking-wider">إجراءات</th></tr>
+              </thead>
+              <tbody>
+                <template x-for="p in products" :key="p.id">
+                  <tr class="border-b border-gray-50 hover:bg-[var(--bg)]/50 transition">
+                    <td class="p-4 font-mono text-gray-400" x-text="p.id"></td>
+                    <td class="p-4"><div class="flex items-center gap-3"><span class="text-2xl" x-text="p.emoji"></span><span class="font-bold" x-text="p.name"></span></div></td>
+                    <td class="p-4"><span class="bg-[var(--sand-light)] px-3 py-1 rounded-full text-xs font-semibold" x-text="p.tag"></span></td>
+                    <td class="p-4 font-bold font-mono" x-text="p.price.toLocaleString('en')+' IQD'"></td>
+                    <td class="p-4">⭐ <span x-text="p.rate"></span></td>
+                    <td class="p-4">
+                      <button @click="editProduct(p)" class="bg-[var(--sand-light)] hover:bg-[var(--sand)] px-3 py-2 rounded-lg text-xs font-bold transition">تعديل</button>
+                      <button @click="deleteProduct(p.id)" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-2 rounded-lg text-xs font-bold transition mr-1">حذف</button>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div x-show="adminTab==='reviews'">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-extrabold">⭐ إدارة تقييمات العملاء</h3>
+          <span class="text-sm text-gray-400" x-text="reviews.length + ' تقييم'"></span>
+        </div>
+        <div x-show="reviews.length===0" class="bg-white rounded-2xl p-10 text-center text-gray-400">لا توجد تقييمات بعد</div>
+        <div class="space-y-4">
+          <template x-for="r in reviews" :key="r.id || r._localId">
+            <div class="bg-white rounded-2xl p-5 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <input x-model="r.name" class="ski !w-auto flex-1 min-w-[160px]" placeholder="اسم العميل">
+                <div class="flex items-center gap-1">
+                  <template x-for="n in 5" :key="n"><button type="button" class="star-btn" @click="r.rating=n" x-text="n<=r.rating?'★':'☆'"></button></template>
+                </div>
+              </div>
+              <textarea x-model="r.comment" rows="3" class="ski resize-none mb-3" placeholder="التقييم"></textarea>
+              <div class="flex gap-2 justify-end">
+                <button @click="updateReview(r)" class="btn-p py-2 px-5 text-sm">حفظ التعديل</button>
+                <button @click="deleteReview(r)" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-xl text-sm font-bold">حذف</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div x-show="adminTab==='settings'">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-extrabold">🎨 تحكم كامل بالموقع</h3>
+          <button @click="saveSettings()" class="btn-p py-2 px-6 text-sm">حفظ كل التغييرات</button>
+        </div>
+        <div class="grid lg:grid-cols-2 gap-5">
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h4 class="font-extrabold mb-4">هوية الموقع</h4>
+            <label class="block text-sm font-bold mb-2">اسم الموقع</label><input x-model="settings.siteName" class="ski mb-3">
+            <label class="block text-sm font-bold mb-2">عنوان الرئيسية</label><input x-model="settings.heroTitle" class="ski mb-3">
+            <label class="block text-sm font-bold mb-2">وصف الرئيسية</label><textarea x-model="settings.heroSubtitle" rows="3" class="ski resize-none mb-3"></textarea>
+            <label class="block text-sm font-bold mb-2">عدد العملاء الظاهر</label><input x-model="settings.customerCount" class="ski mb-3">
+            <label class="block text-sm font-bold mb-2">التقييم العام الظاهر</label><input x-model="settings.ratingText" class="ski mb-3">
+            <label class="block text-sm font-bold mb-2">نص قسم عنّا</label><textarea x-model="settings.aboutText" rows="4" class="ski resize-none"></textarea>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h4 class="font-extrabold mb-4">الألوان</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="text-sm font-bold">اللون الأساسي<input type="color" x-model="settings.primary" class="w-full h-12 mt-2 rounded-xl cursor-pointer"></label>
+              <label class="text-sm font-bold">اللون الثانوي<input type="color" x-model="settings.secondary" class="w-full h-12 mt-2 rounded-xl cursor-pointer"></label>
+              <label class="text-sm font-bold">خلفية الموقع<input type="color" x-model="settings.background" class="w-full h-12 mt-2 rounded-xl cursor-pointer"></label>
+              <label class="text-sm font-bold">لون النص<input type="color" x-model="settings.text" class="w-full h-12 mt-2 rounded-xl cursor-pointer"></label>
+            </div>
+            <div class="mt-5 p-4 rounded-2xl border border-gray-100" :style="`background:${settings.background};color:${settings.text}`">
+              <div class="font-extrabold mb-2">معاينة</div><button class="btn-p py-2 px-5 text-sm">زر تجريبي</button>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h4 class="font-extrabold mb-4">الطلبات والتواصل</h4>
+            <label class="block text-sm font-bold mb-2">رقم واتساب</label><input x-model="settings.whatsappNumber" class="ski mb-3" placeholder="9647xxxxxxxxx">
+            <p class="text-xs text-gray-400">اكتب الرقم بدون + أو مسافات.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h4 class="font-extrabold mb-4">التقييمات</h4>
+            <label class="flex items-center justify-between gap-3 mb-4"><span class="font-bold">إظهار قسم التقييمات</span><input type="checkbox" x-model="settings.showReviews" class="w-5 h-5"></label>
+            <label class="flex items-center justify-between gap-3"><span class="font-bold">السماح للزوار بإضافة تقييم</span><input type="checkbox" x-model="settings.allowReviews" class="w-5 h-5"></label>
+          </div>
+        </div>
+      </div>
+
+      <div x-show="adminTab==='orders'">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-extrabold">📋 الطلبات الواردة</h3>
+        </div>
+        <div x-show="orders.length===0" class="text-center py-20 text-gray-300">
+          <div class="text-6xl mb-4 opacity-30">📭</div>
+          <p class="text-lg">لا توجد طلبات حالياً</p>
+        </div>
+        <div class="space-y-4">
+          <template x-for="(order,i) in orders" :key="i">
+            <div class="oc">
+              <div class="flex flex-wrap gap-3 items-center mb-4">
+                <span class="font-extrabold text-[var(--primary)] text-lg" x-text="'#'+(i+1)"></span>
+                <span class="text-gray-400 text-sm font-mono" x-text="order.date"></span>
+                <span :class="order.status==='new'?'bg-blue-50 text-blue-600':order.status==='processing'?'bg-orange-50 text-orange-600':'bg-green-50 text-green-600'" class="px-4 py-1.5 rounded-full text-xs font-bold" x-text="order.status==='new'?'جديد':order.status==='processing'?'قيد المعالجة':'مكتمل'"></span>
+              </div>
+              <div class="space-y-2 mb-4 pb-4 border-b border-gray-100">
+                <template x-for="item in order.items" :key="item.product.id">
+                  <div class="flex gap-3 items-center text-sm bg-[var(--bg)] rounded-xl p-3">
+                    <span class="text-xl" x-text="item.product.emoji"></span>
+                    <span x-text="item.product.name" class="flex-1 font-medium"></span>
+                    <span class="text-gray-400">x<span x-text="item.qty"></span></span>
+                    <span class="font-bold text-[var(--secondary)] font-mono" x-text="(item.product.price*item.qty).toLocaleString('en')+' IQD'"></span>
+                  </div>
+                </template>
+              </div>
+              <div class="mb-3 bg-[var(--bg)] rounded-xl p-3 text-sm">
+                <div class="font-bold text-[var(--text)] mb-1">👤 معلومات الزبون:</div>
+                <div class="text-gray-600" x-text="'الاسم: ' + (order.customer?.name || '—')"></div>
+                <div class="text-gray-600" x-text="'الهاتف: ' + (order.customer?.phone || '—')"></div>
+                <div class="text-gray-600" x-text="'العنوان: ' + (order.customer?.address || '—')"></div>
+                <div x-show="order.customer?.notes" class="text-gray-500 mt-1 text-xs" x-text="'ملاحظات: ' + order.customer.notes"></div>
+              </div>
+              <div class="flex justify-between items-center font-extrabold text-lg mb-4">
+                <span class="text-gray-500 text-sm">المجموع:</span>
+                <span class="text-[var(--text)] font-mono" x-text="order.total.toLocaleString('en')+' IQD'"></span>
+              </div>
+              <div class="flex gap-2">
+                <button x-show="order.status==='new'" @click="updateOrderStatus(i,'processing')" class="bg-[var(--sand-light)] hover:bg-[var(--sand)] px-5 py-2.5 rounded-xl text-sm font-bold transition">بدء المعالجة</button>
+                <button x-show="order.status==='processing'" @click="updateOrderStatus(i,'completed')" class="bg-green-50 text-green-600 hover:bg-green-500 hover:text-white px-5 py-2.5 rounded-xl text-sm font-bold transition">إكمال الطلب</button>
+                <button @click="deleteOrder(i)" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2.5 rounded-xl text-sm font-bold transition mr-auto">حذف</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Form -->
+  <div x-show="productForm.show" x-cloak class="fixed inset-0 bg-black/40 z-[300] flex items-center justify-center p-4 backdrop-blur-sm" @click.self="productForm.show=false">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+      <h3 class="text-xl font-extrabold mb-6" x-text="productForm.editId?'تعديل منتج':'منتج جديد'"></h3>
+      <input x-model="productForm.name" placeholder="اسم المنتج" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+      <select x-model="productForm.category" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+        <option value="tape">🩹 لاصق فم</option>
+        <option value="band">⌚ سوار منبه</option>
+      </select>
+      <input type="number" x-model="productForm.price" placeholder="السعر بالدينار العراقي" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+      <input type="number" min="0" max="5" step="0.1" x-model="productForm.rate" placeholder="تقييم المنتج (0 - 5)" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+      <input x-model="productForm.desc" placeholder="وصف المنتج" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+      <input x-model="productForm.emoji" placeholder="الإيموجي (مثال: 🩹)" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-6 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
+      <div class="mb-5 bg-[var(--bg)] rounded-2xl p-4">
+        <label class="block font-bold text-sm mb-3">صور المنتج</label>
+        <input type="file" accept="image/*" multiple @change="handleProductImages($event)" class="w-full text-sm mb-3">
+        <p class="text-xs text-gray-400 mb-3">يمكنك إضافة حتى 5 صور. سيتم حفظها داخل الموقع حتى بعد إغلاق الصفحة.</p>
+        <div class="flex flex-wrap gap-2" x-show="productForm.images && productForm.images.length">
+          <template x-for="(img,index) in productForm.images" :key="index"><div class="relative"><img :src="img" class="image-preview"><button type="button" @click="removeProductImage(index)" class="absolute -top-2 -left-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs">×</button></div></template>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button @click="saveProduct()" class="btn-p flex-1 py-3">حفظ</button>
+        <button @click="productForm.show=false" class="bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-2xl font-bold transition">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div x-show="toast.show" x-transition:enter="transition ease-out" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="toast" x-text="toast.msg"></div>
+
+<script>
+function sukoonApp() {
+  const SUPABASE_URL = 'https://sgnjmsjbnnlztidzuiye.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_-J3krkIilCx1rtCfwfob-Q_spCbMaSX';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  return {
+    view: 'home',
+    cat: 'all',
+    cartOpen: false,
+    selectedProduct: null,
+    modalQty: 1,
+    cart: [],
+    toast: { show: false, msg: '' },
+    isAdmin: false,
+    adminView: 'login',
+    adminTab: 'products',
+    adminEmail: localStorage.getItem('sukoon_admin_email') || '',
+    adminPass: '',
+    loginError: '',
+    supabaseUser: null,
+    supabaseReady: false,
+    productForm: { show: false, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [] },
+    whatsappNumber: '9647869975102',
+    settings: { siteName:'سكون', primary:'#6B7F5E', secondary:'#B8956A', background:'#FAF7F2', text:'#1E1E1E', heroTitle:'نوم هادئ\nيوم نشيط', heroSubtitle:'منتجات سكون مصممة بعناية لتحسين جودة نومك. لاصق فم طبي يقلل الشخير، وسوار منبه ذكي يوقظك برفق.', customerCount:'+5000', ratingText:'4.9', aboutText:'نؤمن بأن النوم الجيد أساس الصحة والإنتاجية. نقدم منتجات بسيطة وفعّالة لتحسين جودة نومك، من لاصق الفم الطبي إلى السوار المنبه الذكي.', showReviews:true, allowReviews:true, whatsappNumber:'9647869975102' },
+    checkoutOpen: false,
+    customerInfo: { name: '', phone: '', address: '', notes: '' },
+    reviews: [
+      { name: 'أحمد', rating: 5, comment: 'المنتج ممتاز والتوصيل سريع، تجربة جميلة.', date: 'منذ يومين' },
+      { name: 'سارة', rating: 5, comment: 'الخدمة ممتازة والتعامل محترم جداً.', date: 'منذ 4 أيام' },
+      { name: 'محمد', rating: 4, comment: 'المنتج جيد جداً والتغليف مرتب.', date: 'منذ أسبوع' }
+    ],
+    reviewForm: { name: '', rating: 5, comment: '' },
+    longPressTimer: null,
+    longPressActive: false,
+    longPressTriggered: false,
+
+    products: [
+      { id: 1, name: 'لاصق فم طبي 30 قطعة', emoji: '🩹', category: 'tape', tag: 'لاصق الفم', price: 15000, rate: 4.8, bg: 'linear-gradient(135deg, #E8D5E0 0%, #D4C4D0 100%)', desc: 'لاصق فم طبي من السيليكون الطبي، 30 قطعة في العبوة. يساعد على التنفس من الأنف أثناء النوم ويقلل الشخير بشكل فعال.' },
+      { id: 2, name: 'لاصق فم XL 60 قطعة', emoji: '🩹', category: 'tape', tag: 'لاصق الفم', price: 25000, rate: 4.9, bg: 'linear-gradient(135deg, #F0D0D0 0%, #E0C0C0 100%)', desc: 'عبوة اقتصادية 60 قطعة، مقاس XL للراحة القصوى. لاصق لطيف على البشرة وقابل للإزالة بدون ألم.' },
+      { id: 3, name: 'سوار منبه ذكي V1', emoji: '⌚', category: 'band', tag: 'السوار الذكي', price: 45000, rate: 4.7, bg: 'linear-gradient(135deg, #D0D8E0 0%, #C0C8D0 100%)', desc: 'سوار منبه يهتز برفق على معصمك دون إزعاج الآخرين. 3 أوضاع اهتزاز، بطارية تدوم 7 أيام.' },
+      { id: 4, name: 'سوار منبه برو +', emoji: '⌚', category: 'band', tag: 'السوار الذكي', price: 65000, rate: 4.9, bg: 'linear-gradient(135deg, #E0E0D8 0%, #D0D0C8 100%)', desc: 'إصدار برو المتطور مع تطبيق هاتف، تتبع النوم، إحصائيات يومية، مقاوم للماء IP67.' },
+      { id: 5, name: 'لاصق فم للأطفال', emoji: '🩹', category: 'tape', tag: 'لاصق الفم', price: 12000, rate: 4.6, bg: 'linear-gradient(135deg, #F5E6D3 0%, #E8D9C6 100%)', desc: 'لاصق فم خاص بالأطفال، مقاس أصغر ولطيف جداً على بشرتهم الحساسة. 20 قطعة في العبوة.' },
+      { id: 6, name: 'سوار منبه كلاسيك', emoji: '⌚', category: 'band', tag: 'السوار الذكي', price: 35000, rate: 4.5, bg: 'linear-gradient(135deg, #D8E0D0 0%, #C8D0C0 100%)', desc: 'التصميم الكلاسيكي البسيط، اهتزاز قوي وصامت، سهل الاستخدام بدون تطبيقات معقدة.' },
+    ],
+
+    orders: [
+      { date: '2026-09-03 10:30', status: 'new', items: [{ product: { id: 1, name: 'لاصق فم طبي 30 قطعة', emoji: '🩹', price: 15000, bg: 'linear-gradient(135deg, #E8D5E0 0%, #D4C4D0 100%)' }, qty: 2 }], total: 30000, customer: { name: 'أحمد محمد', phone: '0786 997 5102', address: 'بغداد - الكرادة - شارع الرشيد', notes: '' } },
+      { date: '2026-09-02 18:15', status: 'processing', items: [{ product: { id: 4, name: 'سوار منبه برو +', emoji: '⌚', price: 65000, bg: 'linear-gradient(135deg, #E0E0D8 0%, #D0D0C8 100%)' }, qty: 1 }], total: 65000, customer: { name: 'سارة علي', phone: '0770 123 4567', address: 'البصرة - المنصورية', notes: 'توصيل مسائي' } },
+    ],
+
+    async init() {
+      this.products = this.products.map(p => ({...p, images: Array.isArray(p.images) ? p.images : []}));
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        this.supabaseUser = session?.user || null;
+        supabase.auth.onAuthStateChange((_event, session) => { this.supabaseUser = session?.user || null; });
+        const { data: remoteProducts, error: pErr } = await supabase.from('products').select('*').order('id');
+        if (!pErr && remoteProducts && remoteProducts.length) {
+          this.products = remoteProducts.map(p => ({...p, desc: p.description ?? p.desc ?? '', images: Array.isArray(p.images) ? p.images : [], emoji: p.emoji || '🛍️'}));
+        }
+        const { data: remoteReviews, error: rErr } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
+        if (!rErr && remoteReviews) {
+          this.reviews = remoteReviews.map(r => ({ id:r.id, name:r.name, rating:r.rating, comment:r.comment, date:this.formatReviewDate(r.created_at) }));
+        }
+        const { data: remoteSettings, error: sErr } = await supabase.from('site_settings').select('key,value');
+        if (!sErr && remoteSettings) {
+          remoteSettings.forEach(row => { if (row.key && row.value !== undefined) this.settings[row.key] = row.value; });
+        }
+        await this.loadOrders();
+        this.applySettings();
+        this.supabaseReady = true;
+      } catch(e) {
+        console.warn('Supabase load failed', e);
+        this.supabaseReady = false;
+      }
+    },
+    get themeStyle() {
+      const s=this.settings;
+      return `--primary:${s.primary};--primary-light:${this.lighten(s.primary,0.22)};--primary-dark:${this.darken(s.primary,0.25)};--secondary:${s.secondary};--bg:${s.background};--text:${s.text};--sand:${this.lighten(s.secondary,0.42)};--sand-light:${this.lighten(s.secondary,0.52)};`;
+    },
+    lighten(hex, amount=0.2) {
+      if(!/^#[0-9a-f]{6}$/i.test(hex||'')) return '#8FA382';
+      const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
+      const f=x=>Math.round(x+(255-x)*amount);
+      return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    },
+    darken(hex, amount=0.25) {
+      if(!/^#[0-9a-f]{6}$/i.test(hex||'')) return '#4A5D3F';
+      const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
+      const f=x=>Math.round(x*(1-amount));
+      return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    },
+    applySettings() { this.whatsappNumber=this.settings.whatsappNumber || this.whatsappNumber; document.title=(this.settings.siteName||'سكون')+' — متجر النوم'; },
+    async saveSettings() {
+      if(!this.supabaseUser){ this.showToast('🔐 سجل دخول المدير أولاً'); return; }
+      try {
+        const rows=Object.entries(this.settings).map(([key,value])=>({key,value}));
+        const {error}=await supabase.from('site_settings').upsert(rows,{onConflict:'key'});
+        if(error) throw error;
+        this.applySettings(); this.showToast('✅ تم حفظ إعدادات الموقع');
+      } catch(e){ console.error(e); this.showToast('❌ تعذر حفظ الإعدادات. تأكد من صلاحيات Supabase'); }
+    },
+    async updateReview(r) {
+      if(!this.supabaseUser || !r.id) return;
+      const {error}=await supabase.from('reviews').update({name:r.name.trim(),rating:Number(r.rating),comment:r.comment.trim()}).eq('id',r.id);
+      if(error){ this.showToast('❌ تعذر تعديل التقييم'); return; }
+      this.showToast('✅ تم تعديل التقييم');
+    },
+    async deleteReview(r) {
+      if(!this.supabaseUser || !r.id) return;
+      if(!confirm('حذف هذا التقييم نهائياً؟')) return;
+      const {error}=await supabase.from('reviews').delete().eq('id',r.id);
+      if(error){ this.showToast('❌ تعذر حذف التقييم'); return; }
+      this.reviews=this.reviews.filter(x=>x.id!==r.id); this.showToast('🗑️ تم حذف التقييم');
+    },
+
+    formatReviewDate(date) {
+      if (!date) return 'الآن';
+      const d = new Date(date), diff = Math.max(0, Date.now() - d.getTime());
+      const mins = Math.floor(diff/60000), hrs=Math.floor(mins/60), days=Math.floor(hrs/24);
+      if (days >= 1) return 'منذ ' + days + ' يوم';
+      if (hrs >= 1) return 'منذ ' + hrs + ' ساعة';
+      return 'منذ دقائق';
+    },
+    persistProducts() {
+      try { localStorage.setItem('sukoon_products_v3', JSON.stringify(this.products)); } catch(e) {}
+    },
+    async handleProductImages(event) {
+      const files = Array.from(event.target.files || []).filter(f => f.type.startsWith('image/'));
+      const available = 5 - (this.productForm.images?.length || 0);
+      for (const file of files.slice(0, available)) {
+        try {
+          const data = await this.compressImage(file);
+          this.productForm.images.push(data);
+        } catch(e) {}
+      }
+      event.target.value = '';
+    },
+    compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const max = 1200; const scale = Math.min(1, max / Math.max(img.width, img.height));
+            const c = document.createElement('canvas'); c.width = Math.round(img.width*scale); c.height = Math.round(img.height*scale);
+            c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+            resolve(c.toDataURL('image/jpeg',0.78));
+          };
+          img.onerror = reject; img.src = e.target.result;
+        };
+        reader.onerror = reject; reader.readAsDataURL(file);
+      });
+    },
+    removeProductImage(index) { this.productForm.images.splice(index, 1); },
+    async submitReview() {
+      const f=this.reviewForm;
+      if(!f.name.trim() || !f.comment.trim()) { this.showToast('❌ اكتب الاسم والتقييم أولاً'); return; }
+      const review = {name:f.name.trim(), rating:Number(f.rating)||5, comment:f.comment.trim(), date:'الآن'};
+      const { data: inserted, error } = await supabase.from('reviews').insert({ name:review.name, rating:review.rating, comment:review.comment }).select().single();
+      if (error) { this.showToast('❌ تعذر نشر التقييم، حاول مرة أخرى'); return; }
+      review.id=inserted?.id; review._localId=Date.now();
+      this.reviews.unshift(review);
+      try { localStorage.setItem('sukoon_reviews_v1', JSON.stringify(this.reviews)); } catch(e) {}
+      this.reviewForm={name:'',rating:5,comment:''}; this.showToast('⭐ تم نشر تقييمك');
+    },
+
+    get filteredProducts() {
+      if (this.view === 'home') return this.products.slice(0, 4);
+      if (this.cat === 'all') return this.products;
+      return this.products.filter(p => p.category === this.cat);
+    },
+
+    get cartTotal() {
+      return this.cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
+    },
+
+    startLongPress() {
+      this.longPressActive = true;
+      this.longPressTriggered = false;
+      this.longPressTimer = setTimeout(() => {
+        this.longPressTriggered = true;
+        this.longPressActive = false;
+        this.isAdmin = true;
+        this.adminView = 'login';
+        this.showToast('🔐 لوحة التحكم');
+      }, 2000);
+    },
+    cancelLongPress() {
+      clearTimeout(this.longPressTimer);
+      this.longPressActive = false;
+    },
+
+    openProduct(p) { this.selectedProduct = p; this.modalQty = 1; },
+
+    addToCart(product, qty = 1) {
+      const existing = this.cart.find(item => item.product.id === product.id);
+      if (existing) { existing.qty += qty; }
+      else { this.cart.push({ product: { ...product }, qty }); }
+      this.showToast('✅ أُضيف ' + product.name + ' إلى السلّة');
+    },
+
+    updateQty(i, delta) {
+      this.cart[i].qty += delta;
+      if (this.cart[i].qty <= 0) this.cart.splice(i, 1);
+    },
+
+    removeItem(i) { this.cart.splice(i, 1); },
+
+    openCheckout() {
+      this.cartOpen = false;
+      this.checkoutOpen = true;
+      this.customerInfo = { name: '', phone: '', address: '', notes: '' };
+    },
+
+    async sendWhatsApp() {
+      if (this.cart.length === 0) return;
+      if (this.$refs.customerName) this.customerInfo.name = this.$refs.customerName.value;
+      if (this.$refs.customerPhone) this.customerInfo.phone = this.$refs.customerPhone.value;
+      if (this.$refs.customerAddress) this.customerInfo.address = this.$refs.customerAddress.value;
+      this.customerInfo.name = (this.customerInfo.name || '').trim();
+      this.customerInfo.phone = (this.customerInfo.phone || '').trim();
+      this.customerInfo.address = (this.customerInfo.address || '').trim();
+      if (!this.customerInfo.name || !this.customerInfo.phone || !this.customerInfo.address) {
+        this.showToast('❌ يرجى ملء جميع الحقول الإلزامية');
+        return;
+      }
+      let msg = '*طلب جديد من متجر سكون* 🌙\n';
+      msg += '═══════════════════════\n\n';
+      msg += '*👤 معلومات الزبون:*\n';
+      msg += 'الاسم: ' + this.customerInfo.name + '\n';
+      msg += 'الهاتف: ' + this.customerInfo.phone + '\n';
+      msg += 'العنوان: ' + this.customerInfo.address + '\n';
+      if (this.customerInfo.notes) msg += 'ملاحظات: ' + this.customerInfo.notes + '\n';
+      msg += '\n═══════════════════════\n';
+      msg += '*📦 المنتجات:*\n\n';
+      this.cart.forEach((item, i) => {
+        msg += '*' + (i + 1) + '.* ' + item.product.emoji + ' ' + item.product.name + '\n';
+        msg += '    الكمية: ' + item.qty + '\n';
+        msg += '    السعر: ' + (item.product.price * item.qty).toLocaleString('en') + ' IQD\n\n';
+      });
+      msg += '═══════════════════════\n';
+      msg += '*💰 المجموع الكلي: ' + this.cartTotal.toLocaleString('en') + ' IQD*\n\n';
+      msg += '_يرجى تأكيد توفر المنتجات وإرسال تفاصيل التوصيل_';
+      const url = 'https://wa.me/' + (this.settings.whatsappNumber || this.whatsappNumber) + '?text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
+      const newOrder = {
+        date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        status: 'new',
+        items: JSON.parse(JSON.stringify(this.cart)),
+        total: this.cartTotal,
+        customer: { ...this.customerInfo }
+      };
+      this.orders.unshift(newOrder);
+      try {
+        const { error: orderErr } = await supabase.from('orders').insert({
+          date: newOrder.date,
+          status: newOrder.status,
+          items: newOrder.items,
+          total: newOrder.total,
+          customer: newOrder.customer
+        });
+        if (orderErr) throw orderErr;
+      } catch (e) {
+        console.warn('Supabase order save failed', e);
+        try { localStorage.setItem('sukoon_orders_v1', JSON.stringify(this.orders)); } catch (_) {}
+      }
+      this.cart = [];
+      this.checkoutOpen = false;
+      this.showToast('📱 تم فتح واتساب لإرسال طلبك');
+    },
+
+    showToast(msg) { this.toast = { show: true, msg }; setTimeout(() => this.toast.show = false, 3000); },
+
+    async login() {
+      const email = (this.adminEmail || '').trim();
+      const password = this.adminPass || '';
+      this.loginError = '';
+      if (!email || !password) { this.loginError = '❌ أدخل البريد الإلكتروني وكلمة المرور'; return; }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        const msg = String(error.message || '').toLowerCase();
+        if (msg.includes('email not confirmed')) this.loginError = '⚠️ الحساب غير مفعّل. فعّل البريد الإلكتروني من Supabase ثم حاول مرة ثانية.';
+        else if (msg.includes('invalid login credentials')) this.loginError = '❌ البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+        else this.loginError = '❌ تعذر تسجيل الدخول: ' + error.message;
+        return;
+      }
+      localStorage.setItem('sukoon_admin_email', email);
+      this.supabaseUser = data.user;
+      this.adminView = 'dashboard';
+      this.loginError = '';
+      this.adminPass = '';
+    },
+
+    async logout() { await supabase.auth.signOut(); this.supabaseUser = null; this.isAdmin = false; this.adminView = 'login'; this.adminTab = 'products'; },
+
+    startAddProduct() {
+      this.productForm = { show: true, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [] };
+    },
+
+    editProduct(p) {
+      this.productForm = { show: true, editId: p.id, name: p.name, category: p.category, price: p.price, rate: p.rate || 5, desc: p.desc, emoji: p.emoji, images: [...(p.images || [])] };
+    },
+
+    async uploadProductImages(images, productId) {
+      const urls = [];
+      for (const img of (images || [])) {
+        if (typeof img === 'string' && img.startsWith('http')) { urls.push(img); continue; }
+        if (!(typeof img === 'string' && img.startsWith('data:image/'))) continue;
+        const blob = await (await fetch(img)).blob();
+        const path = `${productId}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const { error } = await supabase.storage.from('product-images').upload(path, blob, { contentType:'image/jpeg', upsert:false });
+        if (error) throw error;
+        const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+      return urls;
+    },
+    async saveProduct() {
+      const f = this.productForm;
+      if (!this.supabaseUser) { this.showToast('🔐 سجل دخول المدير أولاً'); return; }
+      if (!f.name || !f.price) { this.showToast('❌ يرجى ملء جميع الحقول'); return; }
+      const tag = f.category === 'tape' ? 'لاصق الفم' : 'السوار الذكي';
+      const bg = f.category === 'tape' ? 'linear-gradient(135deg, #E8D5E0 0%, #D4C4D0 100%)' : 'linear-gradient(135deg, #D0D8E0 0%, #C0C8D0 100%)';
+      try {
+        const id = f.editId || (Math.max(0, ...this.products.map(p => Number(p.id)||0)) + 1);
+        const images = await this.uploadProductImages(f.images || [], id);
+        const row = { id, name:f.name, category:f.category, tag, price:Number(f.price), description:f.desc || '', emoji:f.emoji || (f.category === 'tape' ? '🩹' : '⌚'), rate:Math.max(0,Math.min(5,Number(f.rate)||5)), bg, images };
+        const { error } = await supabase.from('products').upsert(row);
+        if (error) throw error;
+        const idx = this.products.findIndex(p => p.id === id);
+        if (idx > -1) this.products[idx] = {...this.products[idx], ...row, desc:row.description}; else this.products.push({...row, desc:row.description});
+        this.productForm.show = false;
+        this.persistProducts();
+        this.showToast('✅ تم حفظ المنتج والصور على Supabase');
+      } catch (e) {
+        console.error(e); this.showToast('❌ تعذر حفظ المنتج. تأكد من صلاحيات Supabase');
+      }
+    },
+
+    async deleteProduct(id) {
+      if (!this.supabaseUser) { this.showToast('🔐 سجل دخول المدير أولاً'); return; }
+      if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) { this.showToast('❌ تعذر حذف المنتج'); return; }
+        this.products = this.products.filter(p => p.id !== id);
+        this.persistProducts();
+        this.showToast('🗑️ تم حذف المنتج');
+      }
+    },
+
+    async loadOrders() {
+      try {
+        const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+        if (!error && data) {
+          this.orders = data.map(o => ({ id:o.id, date:o.date, status:o.status, items:o.items || [], total:Number(o.total)||0, customer:o.customer || {} }));
+          try { localStorage.setItem('sukoon_orders_v1', JSON.stringify(this.orders)); } catch (_) {}
+          return;
+        }
+      } catch (e) { console.warn('Orders table unavailable', e); }
+      try {
+        const cached = JSON.parse(localStorage.getItem('sukoon_orders_v1') || 'null');
+        if (Array.isArray(cached)) this.orders = cached;
+      } catch (_) {}
+    },
+
+    async updateOrderStatus(i, status) {
+      const order = this.orders[i];
+      if (!order) return;
+      order.status = status;
+      if (order.id) {
+        const { error } = await supabase.from('orders').update({status}).eq('id', order.id);
+        if (error) this.showToast('⚠️ تم التحديث محلياً، لكن تعذر الحفظ على Supabase');
+      }
+      try { localStorage.setItem('sukoon_orders_v1', JSON.stringify(this.orders)); } catch (_) {}
+      this.showToast('✅ تم تحديث حالة الطلب');
+    },
+
+    async deleteOrder(i) {
+      const order = this.orders[i];
+      if (!order || !confirm('هل أنت متأكد من حذف هذا الطلب؟')) return;
+      if (order.id) {
+        const { error } = await supabase.from('orders').delete().eq('id', order.id);
+        if (error) { this.showToast('❌ تعذر حذف الطلب من Supabase'); return; }
+      }
+      this.orders.splice(i, 1);
+      try { localStorage.setItem('sukoon_orders_v1', JSON.stringify(this.orders)); } catch (_) {}
+      this.showToast('🗑️ تم حذف الطلب');
+    }
+  }
+}
+</script>
+</body>
+</html>
