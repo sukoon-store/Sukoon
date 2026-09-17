@@ -21,6 +21,9 @@
   @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse-soft { 0%,100%{box-shadow:0 0 0 0 rgba(107,127,94,0.3)} 50%{box-shadow:0 0 0 12px rgba(107,127,94,0)} }
   @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+  .product-gallery-thumb { width:64px;height:64px;object-fit:cover;border-radius:14px;border:2px solid transparent;cursor:pointer;background:#fff; }
+  .product-gallery-thumb.active { border-color:var(--primary); }
+  .color-dot { width:18px;height:18px;border-radius:999px;border:1px solid rgba(0,0,0,.15);display:inline-block;vertical-align:middle; }
   .af { animation:float 6s ease-in-out infinite; }
   .af2 { animation:float2 7s ease-in-out infinite; }
   .afu { animation:fadeUp 0.8s ease-out forwards; }
@@ -141,7 +144,7 @@
         <div class="ci" :style="`background:${p.bg}`">
           <template x-if="p.images && p.images.length"><img :src="p.images[0]" class="product-photo" :alt="p.name"></template><template x-if="!p.images || !p.images.length"><span class="em" x-text="p.emoji"></span></template>
           <div class="co">
-            <button @click.stop="addToCart(p)" class="bg-white text-[var(--text)] px-5 py-2.5 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition">أضف للسلة</button>
+            <button @click.stop="openProduct(p)" class="bg-white text-[var(--text)] px-5 py-2.5 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition">أضف للسلة</button>
           </div>
         </div>
         <div class="p-4">
@@ -174,7 +177,7 @@
         <div class="ci" :style="`background:${p.bg}`">
           <template x-if="p.images && p.images.length"><img :src="p.images[0]" class="product-photo" :alt="p.name"></template><template x-if="!p.images || !p.images.length"><span class="em" x-text="p.emoji"></span></template>
           <div class="co">
-            <button @click.stop="addToCart(p)" class="bg-white text-[var(--text)] px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition flex items-center gap-2"><span>🛒</span> أضف للسلة</button>
+            <button @click.stop="openProduct(p)" class="bg-white text-[var(--text)] px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition flex items-center gap-2"><span>🛒</span> أضف للسلة</button>
           </div>
         </div>
         <div class="p-5">
@@ -283,15 +286,46 @@
 
 <!-- PRODUCT MODAL -->
 <div x-show="selectedProduct" x-cloak class="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" @click.self="selectedProduct=null">
-  <div x-show="selectedProduct" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative">
-    <button @click="selectedProduct=null" class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur w-10 h-10 rounded-full shadow-lg text-lg hover:scale-110 transition flex items-center justify-center">✕</button>
-    <div class="h-64 flex items-center justify-center relative" :style="`background:${selectedProduct?selectedProduct.bg:''}`">
-      <template x-if="selectedProduct && selectedProduct.images && selectedProduct.images.length"><img :src="selectedProduct.images[0]" class="product-photo-contain" :alt="selectedProduct.name"></template><template x-if="!selectedProduct || !selectedProduct.images || !selectedProduct.images.length"><span class="text-8xl drop-shadow-2xl" x-text="selectedProduct?selectedProduct.emoji:''"></span></template>
+  <div x-show="selectedProduct" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0" class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative max-h-[92vh] overflow-y-auto">
+    <button @click="selectedProduct=null" class="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur w-10 h-10 rounded-full shadow-lg text-lg hover:scale-110 transition flex items-center justify-center">✕</button>
+    <div class="h-72 flex items-center justify-center relative" :style="`background:${selectedProduct?selectedProduct.bg:''}`">
+      <template x-if="selectedProduct && selectedProduct.images && selectedProduct.images.length">
+        <img :src="selectedProduct.images[selectedImageIndex] || selectedProduct.images[0]" class="product-photo-contain" :alt="selectedProduct.name">
+      </template>
+      <template x-if="!selectedProduct || !selectedProduct.images || !selectedProduct.images.length">
+        <span class="text-8xl drop-shadow-2xl" x-text="selectedProduct?selectedProduct.emoji:''"></span>
+      </template>
+    </div>
+    <div class="p-4 flex gap-2 overflow-x-auto justify-center border-b border-gray-100" x-show="selectedProduct && selectedProduct.images && selectedProduct.images.length > 1">
+      <template x-for="(img,index) in (selectedProduct ? selectedProduct.images : [])" :key="index">
+        <img :src="img" @click="selectedImageIndex=index" :class="selectedImageIndex===index?'active':''" class="product-gallery-thumb">
+      </template>
     </div>
     <div class="p-8">
       <span class="inline-block text-xs font-bold text-[var(--primary)] bg-[var(--primary)]/10 px-3 py-1 rounded-full mb-3" x-text="selectedProduct?selectedProduct.tag:''"></span>
       <h2 class="text-2xl font-extrabold text-[var(--text)] mb-3" x-text="selectedProduct?selectedProduct.name:''"></h2>
       <p class="text-gray-500 leading-relaxed mb-6" x-text="selectedProduct?selectedProduct.desc:''"></p>
+
+      <template x-if="selectedProduct && selectedProduct.colors && selectedProduct.colors.length">
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-extrabold text-[var(--text)]">اختر اللون</span>
+            <span x-show="selectedColor" class="text-sm text-gray-400" x-text="selectedColor ? selectedColor.name : ''"></span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <template x-for="color in (selectedProduct ? selectedProduct.colors : [])" :key="color.name">
+              <button @click="color.stock>0 && (selectedColor=color)" :disabled="color.stock<=0"
+                :class="selectedColor && selectedColor.name===color.name ? 'border-[var(--primary)] bg-[var(--primary)]/10 ring-2 ring-[var(--primary)]/20' : 'border-gray-200 bg-white'"
+                class="px-4 py-2.5 rounded-xl border-2 font-bold text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+                <span class="color-dot" :style="`background:${color.hex || '#ddd'}`"></span>
+                <span x-text="color.name" class="mx-1"></span>
+                <span class="text-xs text-gray-400" x-text="color.stock>0 ? '('+color.stock+' متوفر)' : '(غير متوفر)'"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+      </template>
+
       <div class="flex gap-6 text-sm text-gray-400 mb-6">
         <span class="flex items-center gap-1.5">⭐ <span class="font-bold text-[var(--text)]" x-text="selectedProduct?selectedProduct.rate:''"></span></span>
         <span class="flex items-center gap-1.5">📦 توصيل 1-2 يوم</span>
@@ -302,11 +336,14 @@
         <div class="flex items-center gap-3 bg-[var(--bg)] rounded-2xl px-2 py-1">
           <button @click="modalQty>1?modalQty--:null" class="bg-white w-10 h-10 rounded-xl font-bold text-lg shadow-sm hover:shadow transition">−</button>
           <span x-text="modalQty" class="font-bold text-lg w-6 text-center"></span>
-          <button @click="modalQty++" class="bg-white w-10 h-10 rounded-xl font-bold text-lg shadow-sm hover:shadow transition">+</button>
+          <button @click="increaseModalQty()" class="bg-white w-10 h-10 rounded-xl font-bold text-lg shadow-sm hover:shadow transition">+</button>
         </div>
       </div>
-      <button @click="addToCart(selectedProduct, modalQty); selectedProduct=null" class="btn-p w-full text-center block text-base py-4">
-        أضف للسلة — <span x-text="selectedProduct?(selectedProduct.price*modalQty).toLocaleString('en'):''"></span> IQD
+      <button @click="addSelectedProductToCart()" :disabled="!canAddSelectedProduct"
+        class="btn-p w-full text-center block text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span x-text="selectedProduct && selectedProduct.colors && selectedProduct.colors.length && !selectedColor ? 'اختر اللون أولاً' : 'أضف للسلة — '"></span>
+        <span x-show="!selectedProduct || !selectedProduct.colors || !selectedProduct.colors.length || selectedColor" x-text="selectedProduct?(selectedProduct.price*modalQty).toLocaleString('en'):''"></span>
+        <span x-show="!selectedProduct || !selectedProduct.colors || !selectedProduct.colors.length || selectedColor"> IQD</span>
       </button>
     </div>
   </div>
@@ -325,7 +362,7 @@
         <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 shadow-sm" :style="`background:${item.product.bg}`" x-text="item.product.emoji"></div>
         <div class="flex-1 min-w-0">
           <h4 class="font-bold text-sm text-[var(--text)] truncate" x-text="item.product.name"></h4>
-          <span class="text-[var(--secondary)] font-bold text-sm" x-text="item.product.price.toLocaleString('en')+' IQD'"></span>
+          <span class="text-[var(--secondary)] font-bold text-sm" x-text="item.product.price.toLocaleString('en')+' IQD'"></span><div x-show="item.color" class="text-xs text-gray-500 mt-1">اللون: <span class="font-bold" x-text="item.color?.name"></span></div>
         </div>
         <div class="flex items-center gap-2 bg-white rounded-xl px-1 py-1 shadow-sm">
           <button @click="updateQty(i,-1)" class="w-7 h-7 rounded-lg hover:bg-[var(--bg)] transition text-sm font-bold">−</button>
@@ -548,6 +585,7 @@
                   <div class="flex gap-3 items-center text-sm bg-[var(--bg)] rounded-xl p-3">
                     <span class="text-xl" x-text="item.product.emoji"></span>
                     <span x-text="item.product.name" class="flex-1 font-medium"></span>
+                    <span x-show="item.color" class="text-xs text-gray-500">لون: <span x-text="item.color?.name"></span></span>
                     <span class="text-gray-400">x<span x-text="item.qty"></span></span>
                     <span class="font-bold text-[var(--secondary)] font-mono" x-text="(item.product.price*item.qty).toLocaleString('en')+' IQD'"></span>
                   </div>
@@ -590,6 +628,23 @@
       <input x-model="productForm.desc" placeholder="وصف المنتج" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-3 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
       <input x-model="productForm.emoji" placeholder="الإيموجي (مثال: 🩹)" class="w-full p-4 bg-[var(--bg)] border-2 border-transparent rounded-2xl mb-6 outline-none focus:border-[var(--primary)] focus:bg-white transition font-semibold">
       <div class="mb-5 bg-[var(--bg)] rounded-2xl p-4">
+        <div class="flex justify-between items-center mb-3">
+          <label class="block font-bold text-sm">ألوان المنتج والمخزون</label>
+          <button type="button" @click="productForm.colors.push({name:'',hex:'#000000',stock:0})" class="bg-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm">+ إضافة لون</button>
+        </div>
+        <p class="text-xs text-gray-400 mb-3">اكتب اسم اللون، اختر لونه، وحدد الكمية المتوفرة. إذا كانت 0 يظهر للزبون «غير متوفر».</p>
+        <div class="space-y-2">
+          <template x-for="(color,index) in productForm.colors" :key="index">
+            <div class="grid grid-cols-[1fr_48px_80px_36px] gap-2 items-center">
+              <input x-model="color.name" placeholder="مثال: أسود" class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:border-[var(--primary)] text-sm font-semibold">
+              <input type="color" x-model="color.hex" class="w-12 h-11 rounded-xl cursor-pointer border-0 bg-white">
+              <input type="number" min="0" x-model.number="color.stock" placeholder="الكمية" class="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:border-[var(--primary)] text-sm font-semibold">
+              <button type="button" @click="productForm.colors.splice(index,1)" class="w-9 h-9 rounded-xl bg-red-50 text-red-500 font-bold">×</button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="mb-5 bg-[var(--bg)] rounded-2xl p-4">
         <label class="block font-bold text-sm mb-3">صور المنتج</label>
         <input type="file" accept="image/*" multiple @change="handleProductImages($event)" class="w-full text-sm mb-3">
         <p class="text-xs text-gray-400 mb-3">يمكنك إضافة حتى 5 صور. سيتم حفظها داخل الموقع حتى بعد إغلاق الصفحة.</p>
@@ -619,6 +674,8 @@ function sukoonApp() {
     cat: 'all',
     cartOpen: false,
     selectedProduct: null,
+    selectedImageIndex: 0,
+    selectedColor: null,
     modalQty: 1,
     cart: [],
     toast: { show: false, msg: '' },
@@ -630,7 +687,7 @@ function sukoonApp() {
     loginError: '',
     supabaseUser: null,
     supabaseReady: false,
-    productForm: { show: false, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [] },
+    productForm: { show: false, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [], colors: [] },
     whatsappNumber: '9647869975102',
     settings: { siteName:'سكون', primary:'#6B7F5E', secondary:'#B8956A', background:'#FAF7F2', text:'#1E1E1E', heroTitle:'نوم هادئ\nيوم نشيط', heroSubtitle:'منتجات سكون مصممة بعناية لتحسين جودة نومك. لاصق فم طبي يقلل الشخير، وسوار منبه ذكي يوقظك برفق.', customerCount:'+5000', ratingText:'4.9', aboutText:'نؤمن بأن النوم الجيد أساس الصحة والإنتاجية. نقدم منتجات بسيطة وفعّالة لتحسين جودة نومك، من لاصق الفم الطبي إلى السوار المنبه الذكي.', showReviews:true, allowReviews:true, whatsappNumber:'9647869975102' },
     checkoutOpen: false,
@@ -660,14 +717,14 @@ function sukoonApp() {
     ],
 
     async init() {
-      this.products = this.products.map(p => ({...p, images: Array.isArray(p.images) ? p.images : []}));
+      this.products = this.products.map(p => ({...p, images: Array.isArray(p.images) ? p.images : [], colors: this.normalizeColors(p.colors)}));
       try {
         const { data: { session } } = await supabase.auth.getSession();
         this.supabaseUser = session?.user || null;
         supabase.auth.onAuthStateChange((_event, session) => { this.supabaseUser = session?.user || null; });
         const { data: remoteProducts, error: pErr } = await supabase.from('products').select('*').order('id');
         if (!pErr && remoteProducts && remoteProducts.length) {
-          this.products = remoteProducts.map(p => ({...p, desc: p.description ?? p.desc ?? '', images: Array.isArray(p.images) ? p.images : [], emoji: p.emoji || '🛍️'}));
+          this.products = remoteProducts.map(p => ({...p, desc: p.description ?? p.desc ?? '', images: Array.isArray(p.images) ? p.images : [], colors: this.normalizeColors(p.colors), emoji: p.emoji || '🛍️'}));
         }
         const { data: remoteReviews, error: rErr } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
         if (!rErr && remoteReviews) {
@@ -802,18 +859,71 @@ function sukoonApp() {
       this.longPressActive = false;
     },
 
-    openProduct(p) { this.selectedProduct = p; this.modalQty = 1; },
+    normalizeColors(colors) {
+      if (!Array.isArray(colors)) return [];
+      return colors.map(c => ({
+        name: String(c?.name || '').trim(),
+        hex: /^#[0-9a-f]{6}$/i.test(c?.hex || '') ? c.hex : '#cccccc',
+        stock: Math.max(0, Number(c?.stock) || 0)
+      })).filter(c => c.name);
+    },
 
-    addToCart(product, qty = 1) {
-      const existing = this.cart.find(item => item.product.id === product.id);
-      if (existing) { existing.qty += qty; }
-      else { this.cart.push({ product: { ...product }, qty }); }
-      this.showToast('✅ أُضيف ' + product.name + ' إلى السلّة');
+    openProduct(p) {
+      this.selectedProduct = p;
+      this.modalQty = 1;
+      this.selectedImageIndex = 0;
+      const colors = this.normalizeColors(p.colors);
+      this.selectedColor = colors.length === 1 && colors[0].stock > 0 ? colors[0] : null;
+    },
+
+    get canAddSelectedProduct() {
+      if (!this.selectedProduct) return false;
+      const colors = this.normalizeColors(this.selectedProduct.colors);
+      if (colors.length && !this.selectedColor) return false;
+      if (this.selectedColor && this.modalQty > Number(this.selectedColor.stock)) return false;
+      return true;
+    },
+
+    increaseModalQty() {
+      const max = this.selectedColor ? Number(this.selectedColor.stock) : null;
+      if (!max || this.modalQty < max) this.modalQty++;
+      else this.showToast('⚠️ الكمية المطلوبة أكبر من المتوفر');
+    },
+
+    addSelectedProductToCart() {
+      if (!this.canAddSelectedProduct) {
+        this.showToast(this.selectedProduct?.colors?.length ? '❌ اختر لوناً متوفراً والكمية المناسبة' : '❌ لا يمكن إضافة هذا المنتج');
+        return;
+      }
+      this.addToCart(this.selectedProduct, this.modalQty, this.selectedColor);
+      this.selectedProduct = null;
+    },
+
+    addToCart(product, qty = 1, color = null) {
+      const colorName = color?.name || '';
+      const existing = this.cart.find(item => item.product.id === product.id && (item.color?.name || '') === colorName);
+      if (existing) {
+        const max = color ? Number(color.stock) : null;
+        if (max && existing.qty + qty > max) {
+          this.showToast('⚠️ لا توجد كمية كافية من هذا اللون');
+          return;
+        }
+        existing.qty += qty;
+      } else {
+        this.cart.push({ product: { ...product }, qty, color: color ? {...color} : null });
+      }
+      this.showToast('✅ أُضيف ' + product.name + (color ? ' — ' + color.name : '') + ' إلى السلّة');
     },
 
     updateQty(i, delta) {
-      this.cart[i].qty += delta;
-      if (this.cart[i].qty <= 0) this.cart.splice(i, 1);
+      const item = this.cart[i];
+      if (!item) return;
+      if (delta > 0 && item.color && item.qty + delta > Number(item.color.stock)) {
+        this.showToast('⚠️ لا توجد كمية إضافية من هذا اللون');
+        return;
+      }
+      item.qty += delta;
+      if (item.qty <= 0) this.cart.splice(i, 1);
     },
 
     removeItem(i) { this.cart.splice(i, 1); },
@@ -848,6 +958,7 @@ function sukoonApp() {
       this.cart.forEach((item, i) => {
         msg += '*' + (i + 1) + '.* ' + item.product.emoji + ' ' + item.product.name + '\n';
         msg += '    الكمية: ' + item.qty + '\n';
+        if (item.color) msg += '    اللون: ' + item.color.name + '\n';
         msg += '    السعر: ' + (item.product.price * item.qty).toLocaleString('en') + ' IQD\n\n';
       });
       msg += '═══════════════════════\n';
@@ -906,11 +1017,11 @@ function sukoonApp() {
     async logout() { await supabase.auth.signOut(); this.supabaseUser = null; this.isAdmin = false; this.adminView = 'login'; this.adminTab = 'products'; },
 
     startAddProduct() {
-      this.productForm = { show: true, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [] };
+      this.productForm = { show: true, editId: null, name: '', category: 'tape', price: '', rate: 5, desc: '', emoji: '', images: [], colors: [] };
     },
 
     editProduct(p) {
-      this.productForm = { show: true, editId: p.id, name: p.name, category: p.category, price: p.price, rate: p.rate || 5, desc: p.desc, emoji: p.emoji, images: [...(p.images || [])] };
+      this.productForm = { show: true, editId: p.id, name: p.name, category: p.category, price: p.price, rate: p.rate || 5, desc: p.desc, emoji: p.emoji, images: [...(p.images || [])], colors: this.normalizeColors(p.colors) };
     },
 
     async uploadProductImages(images, productId) {
@@ -936,7 +1047,7 @@ function sukoonApp() {
       try {
         const id = f.editId || (Math.max(0, ...this.products.map(p => Number(p.id)||0)) + 1);
         const images = await this.uploadProductImages(f.images || [], id);
-        const row = { id, name:f.name, category:f.category, tag, price:Number(f.price), description:f.desc || '', emoji:f.emoji || (f.category === 'tape' ? '🩹' : '⌚'), rate:Math.max(0,Math.min(5,Number(f.rate)||5)), bg, images };
+        const row = { id, name:f.name, category:f.category, tag, price:Number(f.price), description:f.desc || '', emoji:f.emoji || (f.category === 'tape' ? '🩹' : '⌚'), rate:Math.max(0,Math.min(5,Number(f.rate)||5)), bg, images, colors:this.normalizeColors(f.colors) };
         const { error } = await supabase.from('products').upsert(row);
         if (error) throw error;
         const idx = this.products.findIndex(p => p.id === id);
